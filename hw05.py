@@ -23,23 +23,28 @@ import factor
 curr_token = 0
 token_buf = []
 
+
 def read_tokens():
     global token_buf
     for line in sys.stdin:
         token_buf.extend(line.strip().split())
-    #print("Num tokens:",len(token_buf))
+    # print("Num tokens:",len(token_buf))
+
 
 def next_token():
     global curr_token
     global token_buf
     curr_token += 1
-    return token_buf[curr_token-1]
+    return token_buf[curr_token - 1]
+
 
 def next_int():
     return int(next_token())
 
+
 def next_float():
     return float(next_token())
+
 
 def read_model():
     # Read in all tokens and throw away the first (expected to be "MARKOV")
@@ -74,12 +79,11 @@ def read_model():
         factor_vals.append([next_float() for i in range(next_int())])
 
     # DEBUG
-    #print("Num vars: ",num_vars)
-    #print("Ranges: ",factor.var_ranges)
-    #print("Scopes: ",factor_scopes)
-    #print("Values: ",factor_vals)
-    return [factor.Factor(s,v) for (s,v) in zip(factor_scopes,factor_vals)]
-
+    # print("Num vars: ",num_vars)
+    # print("Ranges: ",factor.var_ranges)
+    # print("Scopes: ",factor_scopes)
+    # print("Values: ",factor_vals)
+    return [factor.Factor(s, v) for (s, v) in zip(factor_scopes, factor_vals)]
 
 
 #
@@ -87,14 +91,32 @@ def read_model():
 #
 
 def compute_z_varelim(factors):
-
-    ### YOUR HW5 CODE GOES HERE ####
-
-    return 1.0
+    for i in range(int(token_buf[1])):
+        found = []
+        # print(len(factors))
+        # print(factors)
+        for j in factors.copy():
+            if i in j.scope:
+                found.append(j)
+                factors.remove(j)
+        if len(found) >1:
+            mult = found[0]
+            for k in range(1,len(found)):
+                mult = mult*found[k]
+            f=mult.sumout(i)
+            factors.append(f)
+        else:
+            factors.append(found[0].sumout(i))
+    # f = reduce(factor.Factor.__mul__, factors)
+    # z = sum(f.vals)
+    # return z
+    return factors[0].vals[0]
 
 
 if __name__ == "__main__":
     factors = read_model()
     # Compute Z by variable elimination
+    # print(token_buf)
     z = compute_z_varelim(factors)
-    print("Z = ",z)
+
+    print("Z = ", z)

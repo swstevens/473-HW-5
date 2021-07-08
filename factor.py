@@ -22,6 +22,7 @@ var_ranges = []
 # FACTOR CLASS
 #
 
+
 class Factor:
 
     # Initialize a new factor object.
@@ -92,6 +93,7 @@ class Factor:
                     if v in stride2:
                         index2 += stride2[v]
                     break
+        return Factor(new_scope, new_vals)
 
     def sumout(self, v):
         # You don't have to keep this code -- it's just one way of starting the problem.
@@ -108,18 +110,18 @@ class Factor:
         new_scope = self.scope[:]
         stride = self.stride[v]
         new_vals = []
+        # print('initail vals: ',self.vals)
         iter = [0 for i in range(len(self.vals))]
         for i in range(len(self.vals)):
             if iter[i] is 0:
                 int = 0
-                print(var_ranges[i])
+                # print(var_ranges[i])
                 for k in range(var_ranges[v]):
                     int += self.vals[i+stride*k]
                     iter[i+stride*k] = 1
                 new_vals.append(int)
-
         new_scope.remove(v)
-
+        # print("finished values: ",new_vals)
         return Factor(new_scope, new_vals)
 
     def __rmul__(self, other):
@@ -138,16 +140,16 @@ class Factor:
         return val
 
 
-def _main():
-    global var_ranges
-    var_ranges = [2, 2, 2, 2, 3, 3, 5]
-    f3 = Factor([1], [4, 5])
-    f4 = Factor([1, 2], [2.0, 1.0, 0.5, 0.25])
-    f5 = Factor([1,4], [1,2,3,4,5,6])
-    f34 = f3 * f4
-    f5 = f5.sumout(1)
-    print(f5.vals)
-
-
-if __name__ == "__main__":
-    _main()
+# def _main():
+#     global var_ranges
+#     var_ranges = [2, 2, 2, 2, 3, 3, 5]
+#     f3 = Factor([1], [4, 5])
+#     f4 = Factor([1, 2], [2.0, 1.0, 0.5, 0.25])
+#     f5 = Factor([1,4], [1,2,3,4,5,6])
+#     f34 = f3 * f4
+#     final = f4.sumout(1)
+#     print(final.vals)
+#
+#
+# if __name__ == "__main__":
+#     _main()
